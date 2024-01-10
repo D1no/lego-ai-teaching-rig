@@ -4,3 +4,7 @@ This is a project to illustrate, test and tinker with traditional Kinematics, Ma
 
 - requires `poetry`
 - run in cable-robot `poetry install`
+
+### Bug Todo
+
+Black Formatter doesn't work anymore when opened via code-workspaces (!). File issue with microsoft.
