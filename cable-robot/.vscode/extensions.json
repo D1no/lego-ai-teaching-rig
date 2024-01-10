@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    // Python
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.black-formatter",
+    "ms-python.isort",
+    "ms-python.flake8",
+    // Python: Poetry Toml Support
+    "tamasfe.even-better-toml",
+  ],
+  "unwantedRecommendations": [
+    // Python: Conflicting with flake8
+    "ms-python.pylint"
+  ]
+}

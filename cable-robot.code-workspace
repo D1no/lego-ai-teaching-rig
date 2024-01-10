@@ -1,0 +1,30 @@
+{
+  // See Multi-Folder Workspace:
+  // https://code.visualstudio.com/docs/editor/multi-root-workspaces#_workspace-file-schema
+  "folders": [
+    {
+      "name": "🤖 cable-robot",
+      "path": "cable-robot/"
+    },
+    {
+      // Complete Repo
+      "name": "🕳️",
+      "path": "."
+    }
+  ],
+  "extensions": {
+    "recommendations": [
+      // General Assistant
+      "github.copilot",
+      "github.copilot-chat",
+      // Code Issue Tracking
+      "gruntfuggly.todo-tree"
+    ],
+    "unwantedRecommendations": []
+  },
+  "settings": {
+    // Global Multi-Folder VSCode Settings
+    // Are overwritten by folders local .vscode/settings.json
+    // See: https://code.visualstudio.com/docs/getstarted/settings#_settings-precedence
+  }
+}

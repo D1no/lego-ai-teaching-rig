@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "cable-robot"
+version = "0.1.0"
+description = "High Precision Parallel Lego Cable Robot"
+authors = ["Dino Scheidt <github@din.ooo>"]
+readme = "README.md"
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+pybricks = "^3.3.0"
+# We are mimicing the "pybrickdev" repository
+# https://github.com/pybricks/pybricksdev/blob/master/pyproject.toml#L36C11-L36C24
+python = ">=3.8.1,<3.12"
+
+[tool.poetry.group.build.dependencies]
+pybricksdev = "^1.0.0a46"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.4"
+flake8 = "^7.0.0"
+black = "^23.12.1"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+src_paths = ["src", "tasks"]

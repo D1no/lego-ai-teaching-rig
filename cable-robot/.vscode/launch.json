@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "name": "Deploy Hub",
+      "type": "python",
+      "request": "launch",
+      "module": "pybricksdev",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "run",
+        "ble",
+        "${workspaceFolder}/src/main.py"
+      ]
+    },
+    {
+      "name": "Run File on Hub",
+      "type": "python",
+      "request": "launch",
+      "module": "pybricksdev",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "args": [
+        "run",
+        "ble",
+        "${file}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  /*
+  *****************************************************************************
+  * Hide Files in Workspace Folder
+  ****************************************************************************/
+  "files.exclude": {
+    // Hide own codespace (since its already open)
+    "*.code-workspace": true,
+    // Hide workspace config files when within workspace
+    "**/.vscode": true,
+    "**/.gitignore": true,
+    "**/.devcontainer": true,
+    // Hide .env files to avoid accidental reveal of secrets
+    "**/*.env*": true,
+    // Hide python artifacts (accesible via global workspace repo folder)
+    "**/.venv": true,
+    "**/*.lock": true,
+    "poetry.toml": true,
+    // Hide all *cache* files and folders
+    "**/*cache*": true,
+  },
+  /*
+  *****************************************************************************
+  * Settings for Workspace Folder
+  ****************************************************************************/
+  "python.defaultInterpreterPath": ".venv/bin/python",
+  // Auto activitate poetry venv in terminal
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+  },
+  "python.testing.pytestArgs": [
+    "src"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  /*
+  *****************************************************************************
+  * Extension Settings for Workspace Folder
+  ****************************************************************************/
+}
