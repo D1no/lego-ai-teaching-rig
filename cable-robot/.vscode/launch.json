@@ -14,7 +14,7 @@
       ]
     },
     {
-      "name": "Run File on Hub",
+      "name": "🤖 Relax",
       "type": "python",
       "request": "launch",
       "module": "pybricksdev",
@@ -23,7 +23,7 @@
       "args": [
         "run",
         "ble",
-        "${file}"
+        "${workspaceFolder}/tasks/relax.py"
       ]
     }
   ]
