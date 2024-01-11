@@ -58,7 +58,7 @@ top_left_out = top_left_in * -1
 
 top_left_travel_min = None
 top_left_travel_max = None
-top_left_travel_mid = None
+top_left_travel_center = None
 top_left_travel_left_neighbor = None
 top_left_travel_right_neighbor = None
 
@@ -73,7 +73,7 @@ bottom_right_out = bottom_right_in * -1
 # Travel Range
 bottom_right_travel_min = None
 bottom_right_travel_max = None
-bottom_right_travel_mid = None
+bottom_right_travel_center = None
 bottom_right_travel_left_neighbor = None
 bottom_right_travel_right_neighbor = None
 
@@ -88,7 +88,7 @@ top_right_out = top_right_in * -1
 # Travel Range
 top_right_travel_min = None
 top_right_travel_max = None
-top_right_travel_mid = None
+top_right_travel_center = None
 top_right_travel_left_neighbor = None
 top_right_travel_right_neighbor = None
 
@@ -103,7 +103,7 @@ bottom_left_out = bottom_left_in * -1
 # Travel Range
 bottom_left_travel_min = None
 bottom_left_travel_max = None
-bottom_left_travel_mid = None
+bottom_left_travel_center = None
 bottom_left_travel_left_neighbor = None
 bottom_left_travel_right_neighbor = None
 
@@ -115,28 +115,28 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("↖ Top Left")
     print("  - top_left_travel_min:", top_left_travel_min)
     print("  - top_left_travel_max:", top_left_travel_max)
-    print("  - top_left_travel_mid:", top_left_travel_mid)
+    print("  - top_left_travel_center:", top_left_travel_center)
     print("  - top_left_travel_left_neighbor:", top_left_travel_left_neighbor)
     print("  - top_left_travel_right_neighbor:", top_left_travel_right_neighbor)
     print("")
     print("↘ Bottom Right")
     print("  - bottom_right_travel_min:", bottom_right_travel_min)
     print("  - bottom_right_travel_max:", bottom_right_travel_max)
-    print("  - bottom_right_travel_mid:", bottom_right_travel_mid)
+    print("  - bottom_right_travel_center:", bottom_right_travel_center)
     print("  - bottom_right_travel_left_neighbor:", bottom_right_travel_left_neighbor)
     print("  - bottom_right_travel_right_neighbor:", bottom_right_travel_right_neighbor)
     print("")
     print("↗ Top Right")
     print("  - top_right_travel_min:", top_right_travel_min)
     print("  - top_right_travel_max:", top_right_travel_max)
-    print("  - top_right_travel_mid:", top_right_travel_mid)
+    print("  - top_right_travel_center:", top_right_travel_center)
     print("  - top_right_travel_left_neighbor:", top_right_travel_left_neighbor)
     print("  - top_right_travel_right_neighbor:", top_right_travel_right_neighbor)
     print("")
     print("↙ Bottom Left")
     print("  - bottom_left_travel_min:", bottom_left_travel_min)
     print("  - bottom_left_travel_max:", bottom_left_travel_max)
-    print("  - bottom_left_travel_mid:", bottom_left_travel_mid)
+    print("  - bottom_left_travel_center:", bottom_left_travel_center)
     print("  - bottom_left_travel_left_neighbor:", bottom_left_travel_left_neighbor)
     print("  - bottom_left_travel_right_neighbor:", bottom_left_travel_right_neighbor)
     print("")
