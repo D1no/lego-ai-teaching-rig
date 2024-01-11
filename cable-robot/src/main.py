@@ -56,6 +56,11 @@ top_left = Motor(Port.A)
 top_left_in = -1
 top_left_out = top_left_in * -1
 
+# Calibration Origin
+top_left_calibration_initial = None
+top_left_calibration_tensioned = None
+
+# Travel Range
 top_left_travel_min = None
 top_left_travel_max = None
 top_left_travel_center = None
@@ -69,6 +74,10 @@ bottom_right = Motor(Port.F)
 # Direction of the motor
 bottom_right_in = -1
 bottom_right_out = bottom_right_in * -1
+
+# Calibration Origin
+bottom_right_calibration_initial = None
+bottom_right_calibration_tensioned = None
 
 # Travel Range
 bottom_right_travel_min = None
@@ -85,6 +94,10 @@ top_right = Motor(Port.B)
 top_right_in = 1
 top_right_out = top_right_in * -1
 
+# Calibration Origin
+top_right_calibration_initial = None
+top_right_calibration_tensioned = None
+
 # Travel Range
 top_right_travel_min = None
 top_right_travel_max = None
@@ -99,6 +112,10 @@ bottom_left = Motor(Port.E)
 # Direction of the motor
 bottom_left_in = 1
 bottom_left_out = bottom_left_in * -1
+
+# Calibration Origin
+bottom_left_calibration_initial = None
+bottom_left_calibration_tensioned = None
 
 # Travel Range
 bottom_left_travel_min = None
@@ -118,6 +135,8 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - top_left_travel_center:", top_left_travel_center)
     print("  - top_left_travel_left_neighbor:", top_left_travel_left_neighbor)
     print("  - top_left_travel_right_neighbor:", top_left_travel_right_neighbor)
+    print("  - top_left_calibration_initial:", top_left_calibration_initial)
+    print("  - top_left_calibration_tensioned:", top_left_calibration_tensioned)
     print("")
     print("↘ Bottom Right")
     print("  - bottom_right_travel_min:", bottom_right_travel_min)
@@ -125,6 +144,8 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - bottom_right_travel_center:", bottom_right_travel_center)
     print("  - bottom_right_travel_left_neighbor:", bottom_right_travel_left_neighbor)
     print("  - bottom_right_travel_right_neighbor:", bottom_right_travel_right_neighbor)
+    print("  - bottom_right_calibration_initial:", bottom_right_calibration_initial)
+    print("  - bottom_right_calibration_tensioned:", bottom_right_calibration_tensioned)
     print("")
     print("↗ Top Right")
     print("  - top_right_travel_min:", top_right_travel_min)
@@ -132,6 +153,8 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - top_right_travel_center:", top_right_travel_center)
     print("  - top_right_travel_left_neighbor:", top_right_travel_left_neighbor)
     print("  - top_right_travel_right_neighbor:", top_right_travel_right_neighbor)
+    print("  - top_right_calibration_initial:", top_right_calibration_initial)
+    print("  - top_right_calibration_tensioned:", top_right_calibration_tensioned)
     print("")
     print("↙ Bottom Left")
     print("  - bottom_left_travel_min:", bottom_left_travel_min)
@@ -139,6 +162,8 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - bottom_left_travel_center:", bottom_left_travel_center)
     print("  - bottom_left_travel_left_neighbor:", bottom_left_travel_left_neighbor)
     print("  - bottom_left_travel_right_neighbor:", bottom_left_travel_right_neighbor)
+    print("  - bottom_left_calibration_initial:", bottom_left_calibration_initial)
+    print("  - bottom_left_calibration_tensioned:", bottom_left_calibration_tensioned)
     print("")
     print("------------------------------------------------------")
 
@@ -174,22 +199,32 @@ async def bring_under_tension(speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION):
     )
 
 
+top_left_calibration_initial = top_left.angle()
+bottom_right_calibration_initial = bottom_right.angle()
+top_right_calibration_initial = top_right.angle()
+bottom_left_calibration_initial = bottom_left.angle()
+
 print(
     "Stage 1.1 (START): Tensioning all motors from [TL, BR, TR, BL]",
-    top_left.angle(),
-    bottom_right.angle(),
-    top_right.angle(),
-    bottom_left.angle(),
+    top_left_calibration_initial,
+    bottom_right_calibration_initial,
+    top_right_calibration_initial,
+    bottom_left_calibration_initial,
 )
 
 run_task(bring_under_tension())
 
+top_left_calibration_tensioned = top_left.angle()
+bottom_right_calibration_tensioned = bottom_right.angle()
+top_right_calibration_tensioned = top_right.angle()
+bottom_left_calibration_tensioned = bottom_left.angle()
+
 print(
     "Stage 1.1 (END): All motors tensioned to [TL, BR, TR, BL]",
-    top_left.angle(),
-    bottom_right.angle(),
-    top_right.angle(),
-    bottom_left.angle(),
+    top_left_calibration_tensioned,
+    bottom_right_calibration_tensioned,
+    top_right_calibration_tensioned,
+    bottom_left_calibration_tensioned,
 )
 
 
@@ -238,7 +273,7 @@ print(
 )
 
 
-# Stage 2.1.1: Go to top left zero position, stop all when top left is stalled
+# Stage 2.1.1: Go to top left zero position, stop all when stalled
 async def travel_to_top_left_zero_position(
     speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION,
 ):
@@ -265,7 +300,7 @@ async def travel_to_top_left_zero_position(
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
-        # Stop all when top left is stalled
+        # Stop all when one stalls
         race=True,
     )
 
@@ -334,3 +369,163 @@ print(
 relax_tension()
 
 print_parameter_status("Stage 2.1.6: Relaxed all motors")
+
+
+# Stage 2.1.7: Go back to tensioned calibration origin
+async def move_to_tensioned_calibration_origin():
+    await multitask(
+        top_left.run_target(
+            speed=SPEED_MAX_ANGLE_PER_SEC,
+            target_angle=top_left_calibration_tensioned,
+            then=Stop.COAST,
+        ),
+        bottom_right.run_target(
+            speed=SPEED_MAX_ANGLE_PER_SEC,
+            target_angle=bottom_right_calibration_tensioned,
+            then=Stop.COAST,
+        ),
+        top_right.run_target(
+            speed=SPEED_MAX_ANGLE_PER_SEC,
+            target_angle=top_right_calibration_tensioned,
+            then=Stop.COAST,
+        ),
+        bottom_left.run_target(
+            speed=SPEED_MAX_ANGLE_PER_SEC,
+            target_angle=bottom_left_calibration_tensioned,
+            then=Stop.COAST,
+        ),
+    )
+
+
+run_task(move_to_tensioned_calibration_origin())
+
+print(
+    "Stage 2.1.7 (END): All motors tensioned to [TL, BR, TR, BL]",
+    top_left_calibration_tensioned,
+    bottom_right_calibration_tensioned,
+    top_right_calibration_tensioned,
+    bottom_left_calibration_tensioned,
+)
+
+# Stage 2.1.8: Relax all motors at the tensioned calibration origin
+relax_tension()
+
+print_parameter_status(
+    "Stage 2.1.8: Relaxed all motors at the tensioned calibration origin"
+)
+
+
+# Stage 2.2.1: Go to bottom right zero position, stop all when stalled
+async def travel_to_bottom_right_zero_position(
+    speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION,
+):
+    await multitask(
+        # Reel In
+        bottom_right.run_until_stalled(
+            speed=speed * bottom_right_in,
+            then=Stop.HOLD,
+            duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
+        ),
+        # Others Reel Out
+        top_left.run_until_stalled(
+            speed=speed * top_left_out,
+            then=Stop.HOLD,
+            duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
+        ),
+        top_right.run_until_stalled(
+            speed=speed * top_right_out,
+            then=Stop.HOLD,
+            duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
+        ),
+        bottom_left.run_until_stalled(
+            speed=speed * bottom_left_out,
+            then=Stop.HOLD,
+            duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
+        ),
+        # Stop all when one stalls
+        race=True,
+    )
+
+
+print("Stage 2.2.1: Bottom Right Angle is at", bottom_right.angle())
+
+run_task(travel_to_bottom_right_zero_position())
+
+# Stage 2.2.2: Safe the bottom right zero position
+bottom_right_travel_min = bottom_right.angle()
+
+print("Stage 2.2.2: Bottom Right MIN Travel Angle is at", bottom_right_travel_min)
+
+# Stage 2.2.3: Set bottom right to hold its current zero position
+bottom_right.hold()
+
+print("Stage 2.2.3: Bottom Right Angle is HOLDING")
+
+
+# Stage 2.2.4: Reel in all other motors until stalled
+async def tension_bottom_right_partners(
+    speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION,
+):
+    await multitask(
+        top_left.run_until_stalled(
+            speed=speed * top_left_in,
+            then=Stop.HOLD,
+            duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
+        ),
+        top_right.run_until_stalled(
+            speed=speed * top_right_in,
+            then=Stop.HOLD,
+            duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
+        ),
+        bottom_left.run_until_stalled(
+            speed=speed * bottom_left_in,
+            then=Stop.HOLD,
+            duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
+        ),
+    )
+
+
+print("Stage 2.2.4: Top Left Angle is at", top_left.angle())
+print("Stage 2.2.4: Top Right Angle is at", top_right.angle())
+print("Stage 2.2.4: Bottom Left Angle is at", bottom_left.angle())
+
+run_task(tension_bottom_right_partners())
+
+# Stage 2.2.5: Safe travel ranges for top left, top right and bottom left
+top_left_travel_max = top_left.angle()
+
+top_right_travel_left_neighbor = top_right.angle()
+bottom_left_travel_right_neighbor = bottom_left.angle()
+
+print("Stage 2.2.5: Top Left MAX Travel Angle is at", top_left_travel_max)
+print(
+    "Stage 2.2.5: Top Right - Left Neighbor Travel Angle is at",
+    top_right_travel_left_neighbor,
+)
+print(
+    "Stage 2.2.5: Bottom Left - Right Neighbor Travel Angle is at",
+    bottom_left_travel_right_neighbor,
+)
+
+# Stage 2.2.6: Relax all motors
+relax_tension()
+
+print_parameter_status("Stage 2.2.6: Relaxed all motors")
+
+# Stage 2.2.7: Go back to tensioned calibration origin
+run_task(move_to_tensioned_calibration_origin())
+
+print(
+    "Stage 2.2.7 (END): All motors tensioned to [TL, BR, TR, BL]",
+    top_left_calibration_tensioned,
+    bottom_right_calibration_tensioned,
+    top_right_calibration_tensioned,
+    bottom_left_calibration_tensioned,
+)
+
+# Stage 2.2.8: Relax all motors at the tensioned calibration origin
+relax_tension()
+
+print_parameter_status(
+    "Stage 2.2.8: Relaxed all motors at the tensioned calibration origin"
+)
