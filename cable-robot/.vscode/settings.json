@@ -16,6 +16,7 @@
     "**/.venv": true,
     "**/*.lock": true,
     "poetry.toml": true,
+    ".flake8": true,
     // Hide all *cache* files and folders
     "**/*cache*": true,
   },
