@@ -238,7 +238,7 @@ print(
 )
 
 
-# Stage 2.1: Go to top left zero position, stop all when top left is stalled
+# Stage 2.1.1: Go to top left zero position, stop all when top left is stalled
 async def travel_to_top_left_zero_position(
     speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION,
 ):
@@ -270,22 +270,22 @@ async def travel_to_top_left_zero_position(
     )
 
 
-print("Stage 2.1: Top Left Angle is at", top_left.angle())
+print("Stage 2.1.1: Top Left Angle is at", top_left.angle())
 
 run_task(travel_to_top_left_zero_position())
 
-# Stage 2.2: Safe the top left zero position
+# Stage 2.1.2: Safe the top left zero position
 top_left_travel_min = top_left.angle()
 
-print("Stage 2.2: Top Left MIN Travel Angle is at", top_left_travel_min)
+print("Stage 2.1.2: Top Left MIN Travel Angle is at", top_left_travel_min)
 
-# Stage 2.3: Set top left to hold its current zero position
+# Stage 2.1.3: Set top left to hold its current zero position
 top_left.hold()
 
-print("Stage 2.3: Top Left Angle is HOLDING")
+print("Stage 2.1.3: Top Left Angle is HOLDING")
 
 
-# Stage 2.4: Reel in all other motors until stalled
+# Stage 2.1.4: Reel in all other motors until stalled
 async def tension_top_left_partners(
     speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION,
 ):
@@ -308,29 +308,29 @@ async def tension_top_left_partners(
     )
 
 
-print("Stage 2.4: Bottom Right Angle is at", bottom_right.angle())
-print("Stage 2.4: Top Right Angle is at", top_right.angle())
-print("Stage 2.4: Bottom Left Angle is at", bottom_left.angle())
+print("Stage 2.1.4: Bottom Right Angle is at", bottom_right.angle())
+print("Stage 2.1.4: Top Right Angle is at", top_right.angle())
+print("Stage 2.1.4: Bottom Left Angle is at", bottom_left.angle())
 
 run_task(tension_top_left_partners())
 
-# Stage 2.5: Safe travel ranges for bottom right, top right and bottom left
+# Stage 2.1.5: Safe travel ranges for bottom right, top right and bottom left
 bottom_right_travel_max = bottom_right.angle()
 
 top_right_travel_right_neighbor = top_right.angle()
 bottom_left_travel_left_neighbor = bottom_left.angle()
 
-print("Stage 2.5: Bottom Right MAX Travel Angle is at", bottom_right_travel_max)
+print("Stage 2.1.5: Bottom Right MAX Travel Angle is at", bottom_right_travel_max)
 print(
-    "Stage 2.5: Top Right - Right Neighbor Travel Angle is at",
+    "Stage 2.1.5: Top Right - Right Neighbor Travel Angle is at",
     top_right_travel_right_neighbor,
 )
 print(
-    "Stage 2.5: Bottom Left - Left Neighbor Travel Angle is at",
+    "Stage 2.1.5: Bottom Left - Left Neighbor Travel Angle is at",
     bottom_left_travel_left_neighbor,
 )
 
-# Stage 2.6: Relax all motors
+# Stage 2.1.6: Relax all motors
 relax_tension()
 
-print_parameter_status("Stage 2.6: Relaxed all motors")
+print_parameter_status("Stage 2.1.6: Relaxed all motors")
