@@ -1,0 +1,140 @@
+{
+	// Aligned Multi-Folder Workspace Workflow
+	// — See: https://code.visualstudio.com/docs/editor/multi-root-workspaces#_workspace-file-schema
+	// Dino Scheidt <github@din.ooo>
+	"folders": [
+		{
+			// Simplefied View: Infrequent files are hidden via the folders .vscode/settings.json.
+			"name": "🤖 cable-robot",
+			"path": "cable-robot"
+		},
+		{
+			// Full Repository: Access to all folders and all files shown.
+			"name": "🕳️",
+			"path": "."
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			// Coding Assistance
+			"github.copilot",
+			"github.copilot-chat",
+			// English Spelling
+			"streetsidesoftware.code-spell-checker",
+			// In-Code Issue Tracking
+			"grusntfuggly.todo-tree"
+		]
+	},
+	"settings": {
+		/*____________________________________________________________
+
+		GLOBAL WORKSPACE SETTINGS
+		_____________________________________________________________*/
+		/**************************************************************
+		 * Editor
+		 *************************************************************/
+		"editor.formatOnSave": true,
+		// Visual guide for 80 and 120 characters.
+		"editor.rulers": [
+			{
+				"color": "#C6C6C608",
+				"column": 80
+			},
+			{
+				"color": "#C6C6C620",
+				"column": 120
+			}
+		],
+		// We auto wrap at 120 characters which is useful for in-line documentation.
+		"editor.wordWrap": "wordWrapColumn",
+		"editor.wordWrapColumn": 120,
+		/*____________________________________________________________
+
+		EXTENSIONS
+		_____________________________________________________________*/
+		/**************************************************************
+		 * English Spelling 
+		 * https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
+		 *************************************************************/
+		"cSpell.diagnosticLevel": "Hint",
+		"cSpell.language": "en",
+		// Add none dictionary words to this list via the >Add: "word" to workspace settings< option.
+		"cSpell.words": [
+			"DEPISSUE",
+			"gruntfuggly",
+			"pupdevices",
+			"pybricks"
+		],
+		/**************************************************************
+		  * In-Code Issue Tracking
+		  * https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree
+		  * Adding extra tags and formatting to make trunk based development easier.
+		  *************************************************************/
+		"todo-tree.tree.disableCompactFolders": false,
+		"todo-tree.highlights.useColourScheme": true,
+		"todo-tree.regex.enableMultiLine": false,
+		"todo-tree.regex.regex": "(\\*|//|#|<!--|;|/\\*|^|^[ \\t]*(-|\\d+.))\\s*($TAGS)",
+		"todo-tree.filtering.includeHiddenFiles": true,
+		// Adding tags
+		"todo-tree.general.tags": [
+			"BUG",
+			"HACK",
+			"FIXME",
+			"TODO",
+			"[ ]",
+			"[x]",
+			// A dependency issue, a circumstance driven outside of our immediate control (DEPISSUE)
+			"DEPISSUE",
+			// Additional information for learning and documentation purposes (NOTE)
+			"NOTE",
+			"Note"
+		],
+		"todo-tree.general.tagGroups": {
+			"NOTE": [
+				"NOTE",
+				"Note"
+			]
+		},
+		"todo-tree.highlights.foregroundColourScheme": [
+			"#fff3f3dc",
+			"#271905de",
+			"#ffffffe8",
+			"#e6ffebee",
+			"#6dc46be6",
+			"#6dc46be6"
+		],
+		"todo-tree.highlights.backgroundColourScheme": [
+			"#c21e12b4",
+			"#de8913b4",
+			"#e2c223d2",
+			"#0d742394",
+			"#68AF6724",
+			"#68af670c"
+		],
+		"todo-tree.highlights.defaultHighlight": {
+			"opacity": 70,
+			"fontWeight": "bold",
+			"gutterIcon": true
+		},
+		"todo-tree.highlights.customHighlight": {
+			"DEPISSUE": {
+				"icon": "package-dependencies",
+				"foreground": "#ffeff2d6",
+				"background": "#e281a34b",
+				"iconColour": "#a9405c40"
+			},
+			"NOTE": {
+				"icon": "pencil",
+				"type": "line",
+				"foreground": "#ffffff6e",
+				"background": "#0b3c0b4b",
+				"iconColour": "#62975a40",
+				"hideFromTree": true,
+				"fontWeight": "normal",
+				"fontStyle": "italic",
+				"gutterIcon": true
+			}
+		},
+		"todo-tree.tree.labelFormat": "${after}",
+	}
+}
