@@ -38,8 +38,8 @@ hub.light.blink(Color.GREEN, [500, 500])
 STALL_TENSION_CLUTCH_DUTY_LIMIT = 20
 STALL_COLLISION_CLUTCH_DUTY_LIMIT = 15
 
-SPEED_MAX_ANGLE_PER_SEC_CALIBRATION = 300
-SPEED_MAX_ANGLE_PER_SEC = 1000
+SPEED_MAX_ANGLE_PER_SEC_CALIBRATION = 400
+SPEED_MAX_ANGLE_PER_SEC = 1200
 
 RELAX_TIME = 1500
 RELAX_SETTLE_TIME = 500
@@ -130,6 +130,7 @@ def print_parameter_status(title: str = "Current Parameters"):
     print(f"[{title}] ---------------------------------")
     print("")
     print("↖ Top Left")
+    print("  > Current Angle:", top_left.angle())
     print("  - top_left_travel_min:", top_left_travel_min)
     print("  - top_left_travel_max:", top_left_travel_max)
     print("  - top_left_travel_center:", top_left_travel_center)
@@ -139,6 +140,7 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - top_left_calibration_tensioned:", top_left_calibration_tensioned)
     print("")
     print("↘ Bottom Right")
+    print("  > Current Angle:", bottom_right.angle())
     print("  - bottom_right_travel_min:", bottom_right_travel_min)
     print("  - bottom_right_travel_max:", bottom_right_travel_max)
     print("  - bottom_right_travel_center:", bottom_right_travel_center)
@@ -148,6 +150,7 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - bottom_right_calibration_tensioned:", bottom_right_calibration_tensioned)
     print("")
     print("↗ Top Right")
+    print("  > Current Angle:", top_right.angle())
     print("  - top_right_travel_min:", top_right_travel_min)
     print("  - top_right_travel_max:", top_right_travel_max)
     print("  - top_right_travel_center:", top_right_travel_center)
@@ -157,6 +160,7 @@ def print_parameter_status(title: str = "Current Parameters"):
     print("  - top_right_calibration_tensioned:", top_right_calibration_tensioned)
     print("")
     print("↙ Bottom Left")
+    print("  > Current Angle:", bottom_left.angle())
     print("  - bottom_left_travel_min:", bottom_left_travel_min)
     print("  - bottom_left_travel_max:", bottom_left_travel_max)
     print("  - bottom_left_travel_center:", bottom_left_travel_center)
