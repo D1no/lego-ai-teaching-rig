@@ -35,10 +35,10 @@ hub = InventorHub()
 hub.light.blink(Color.GREEN, [500, 500])
 
 # Model Constants
-STALL_TENSION_CLUTCH_DUTY_LIMIT = 20
-STALL_COLLISION_CLUTCH_DUTY_LIMIT = 15
+STALL_TENSION_CLUTCH_DUTY_LIMIT = 22
+STALL_COLLISION_CLUTCH_DUTY_LIMIT = 18
 
-SPEED_MAX_ANGLE_PER_SEC_CALIBRATION = 400
+SPEED_MAX_ANGLE_PER_SEC_CALIBRATION = 300
 SPEED_MAX_ANGLE_PER_SEC = 1200
 
 RELAX_TIME = 1500
@@ -173,6 +173,31 @@ def print_parameter_status(title: str = "Current Parameters"):
 
 
 ###########################################################
+# Monitoring
+###########################################################
+
+
+async def log_load(every_ms: int = 200):
+    while True:
+        print(
+            "Load [TL, BR, TR, BL]",
+            top_left.load(),
+            bottom_right.load(),
+            top_right.load(),
+            bottom_left.load(),
+        )
+
+        await wait(every_ms)
+
+
+def run_task_monitored(task):
+    async def runner():
+        await multitask(task, log_load(), race=True)
+
+    run_task(runner())
+
+
+###########################################################
 # Solving Stages
 ###########################################################
 
@@ -216,7 +241,7 @@ print(
     bottom_left_calibration_initial,
 )
 
-run_task(bring_under_tension())
+run_task_monitored(bring_under_tension())
 
 top_left_calibration_tensioned = top_left.angle()
 bottom_right_calibration_tensioned = bottom_right.angle()
@@ -311,7 +336,7 @@ async def travel_to_top_left_zero_position(
 
 print("Stage 2.1.1: Top Left Angle is at", top_left.angle())
 
-run_task(travel_to_top_left_zero_position())
+run_task_monitored(travel_to_top_left_zero_position())
 
 # Stage 2.1.2: Safe the top left zero position
 top_left_travel_min = top_left.angle()
@@ -351,7 +376,7 @@ print("Stage 2.1.4: Bottom Right Angle is at", bottom_right.angle())
 print("Stage 2.1.4: Top Right Angle is at", top_right.angle())
 print("Stage 2.1.4: Bottom Left Angle is at", bottom_left.angle())
 
-run_task(tension_top_left_partners())
+run_task_monitored(tension_top_left_partners())
 
 # Stage 2.1.5: Safe travel ranges for bottom right, top right and bottom left
 bottom_right_travel_max = bottom_right.angle()
@@ -401,7 +426,7 @@ async def move_to_tensioned_calibration_origin():
     )
 
 
-run_task(move_to_tensioned_calibration_origin())
+run_task_monitored(move_to_tensioned_calibration_origin())
 
 print(
     "Stage 2.1.7 (END): All motors tensioned to [TL, BR, TR, BL]",
@@ -453,7 +478,7 @@ async def travel_to_bottom_right_zero_position(
 
 print("Stage 2.2.1: Bottom Right Angle is at", bottom_right.angle())
 
-run_task(travel_to_bottom_right_zero_position())
+run_task_monitored(travel_to_bottom_right_zero_position())
 
 # Stage 2.2.2: Safe the bottom right zero position
 bottom_right_travel_min = bottom_right.angle()
@@ -493,7 +518,7 @@ print("Stage 2.2.4: Top Left Angle is at", top_left.angle())
 print("Stage 2.2.4: Top Right Angle is at", top_right.angle())
 print("Stage 2.2.4: Bottom Left Angle is at", bottom_left.angle())
 
-run_task(tension_bottom_right_partners())
+run_task_monitored(tension_bottom_right_partners())
 
 # Stage 2.2.5: Safe travel ranges for top left, top right and bottom left
 top_left_travel_max = top_left.angle()
@@ -517,7 +542,7 @@ relax_tension()
 print_parameter_status("Stage 2.2.6: Relaxed all motors")
 
 # Stage 2.2.7: Go back to tensioned calibration origin
-run_task(move_to_tensioned_calibration_origin())
+run_task_monitored(move_to_tensioned_calibration_origin())
 
 print(
     "Stage 2.2.7 (END): All motors tensioned to [TL, BR, TR, BL]",
@@ -569,7 +594,7 @@ async def travel_to_bottom_left_zero_position(
 
 print("Stage 2.3.1: Bottom Left Angle is at", bottom_left.angle())
 
-run_task(travel_to_bottom_left_zero_position())
+run_task_monitored(travel_to_bottom_left_zero_position())
 
 # Stage 2.3.2: Safe the bottom left zero position
 bottom_left_travel_min = bottom_left.angle()
@@ -609,7 +634,7 @@ print("Stage 2.3.4: Top Left Angle is at", top_left.angle())
 print("Stage 2.3.4: Top Right Angle is at", top_right.angle())
 print("Stage 2.3.4: Bottom Right Angle is at", bottom_right.angle())
 
-run_task(tension_bottom_left_partners())
+run_task_monitored(tension_bottom_left_partners())
 
 # Stage 2.3.5: Safe travel ranges for top left, top right and bottom left
 top_right_travel_max = top_right.angle()
@@ -633,7 +658,7 @@ relax_tension()
 print_parameter_status("Stage 2.3.6: Relaxed all motors")
 
 # Stage 2.3.7: Go back to tensioned calibration origin
-run_task(move_to_tensioned_calibration_origin())
+run_task_monitored(move_to_tensioned_calibration_origin())
 
 print(
     "Stage 2.3.7 (END): All motors tensioned to [TL, BR, TR, BL]",
@@ -685,7 +710,7 @@ async def travel_to_top_right_zero_position(
 
 print("Stage 2.4.1: Top Right Angle is at", top_right.angle())
 
-run_task(travel_to_top_right_zero_position())
+run_task_monitored(travel_to_top_right_zero_position())
 
 # Stage 2.4.2: Safe the top right zero position
 top_right_travel_min = top_right.angle()
@@ -725,7 +750,7 @@ print("Stage 2.4.4: Top Left Angle is at", top_left.angle())
 print("Stage 2.4.4: Bottom Left Angle is at", bottom_left.angle())
 print("Stage 2.4.4: Bottom Right Angle is at", bottom_right.angle())
 
-run_task(tension_top_right_partners())
+run_task_monitored(tension_top_right_partners())
 
 # Stage 2.4.5: Safe travel ranges for top left, top right and bottom left
 bottom_left_travel_max = bottom_left.angle()
@@ -749,7 +774,7 @@ relax_tension()
 print_parameter_status("Stage 2.4.6: Relaxed all motors")
 
 # Stage 2.4.7: Go back to tensioned calibration origin
-run_task(move_to_tensioned_calibration_origin())
+run_task_monitored(move_to_tensioned_calibration_origin())
 
 print(
     "Stage 2.4.7 (END): All motors tensioned to [TL, BR, TR, BL]",
@@ -813,6 +838,6 @@ async def travel_to_center(
     )
 
 
-run_task(travel_to_center())
+run_task_monitored(travel_to_center())
 
 print_parameter_status("Stage 3.2: Go to the center of the travel ranges")
