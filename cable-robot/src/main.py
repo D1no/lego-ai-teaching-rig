@@ -26,7 +26,7 @@ The documentation for the pybricks library can be found here: https://docs.pybri
 """  # noqa: E501 # pylint: disable=line-too-long
 
 from pybricks.hubs import InventorHub
-from pybricks.parameters import Color, Port, Stop
+from pybricks.parameters import Color, Direction, Port, Stop
 from pybricks.pupdevices import Motor
 from pybricks.tools import multitask, run_task, wait
 
@@ -35,26 +35,44 @@ hub = InventorHub()
 hub.light.blink(Color.GREEN, [500, 500])
 
 # Model Constants
+
 STALL_TENSION_CLUTCH_DUTY_LIMIT = 22
+"""
+Stall sensitivity before clutch triggers during tensioning.
+
+Value   Ratio           Motor                           Reel
+22      1:3   (1/3)     Black Gear 12 (32270)           -> Black Gear 36 (32498)
+30      1:1.4 (5/7)     Light Yellow Gear 20 (18575)    -> Light Grey Gear 28 (46372)
+35      1:1   (1/1)     Dark Grey Gear 24 (24505)       -> Dark Grey Gear 24 (24505)
+"""
+
 STALL_COLLISION_CLUTCH_DUTY_LIMIT = 18
+"""
+Stall sensitivity before clutch triggers when forcing disk into motor.
+
+Value   Ratio           Motor                           Reel
+18      1:3   (1/3)     Black Gear 12 (32270)           -> Black Gear 36 (32498)
+25      1:1.4 (5/7)     Light Yellow Gear 20 (18575)    -> Light Grey Gear 28 (46372)
+30      1:1   (1/1)     Dark Grey Gear 24 (24505)       -> Dark Grey Gear 24 (24505)
+"""
 
 SPEED_MAX_ANGLE_PER_SEC_CALIBRATION = 300
-SPEED_MAX_ANGLE_PER_SEC = 1200
+SPEED_MAX_ANGLE_PER_SEC = 1500
 
-RELAX_TIME = 1500
+RELAX_TIME = 1000
 RELAX_SETTLE_TIME = 500
 
 ###########################################################
 # Motors
 ###########################################################
 
+# Speed Direction Sign Multiplier
+reel_in = 1
+reel_out = reel_in * -1
+
 # ---------------------------------------------------------
 # ↖ Top Left
-top_left = Motor(Port.A)
-
-# Direction of the motor
-top_left_in = -1
-top_left_out = top_left_in * -1
+top_left = Motor(Port.A, positive_direction=Direction.COUNTERCLOCKWISE)
 
 # Calibration Origin
 top_left_calibration_initial = None
@@ -69,11 +87,7 @@ top_left_travel_right_neighbor = None
 
 # ---------------------------------------------------------
 # ↘ Bottom Right
-bottom_right = Motor(Port.F)
-
-# Direction of the motor
-bottom_right_in = -1
-bottom_right_out = bottom_right_in * -1
+bottom_right = Motor(Port.F, positive_direction=Direction.COUNTERCLOCKWISE)
 
 # Calibration Origin
 bottom_right_calibration_initial = None
@@ -90,10 +104,6 @@ bottom_right_travel_right_neighbor = None
 # ↗ Top Right
 top_right = Motor(Port.B)
 
-# Direction of the motor
-top_right_in = 1
-top_right_out = top_right_in * -1
-
 # Calibration Origin
 top_right_calibration_initial = None
 top_right_calibration_tensioned = None
@@ -108,10 +118,6 @@ top_right_travel_right_neighbor = None
 # ---------------------------------------------------------
 # ↙ Bottom Left
 bottom_left = Motor(Port.E)
-
-# Direction of the motor
-bottom_left_in = 1
-bottom_left_out = bottom_left_in * -1
 
 # Calibration Origin
 bottom_left_calibration_initial = None
@@ -206,22 +212,22 @@ def run_task_monitored(task):
 async def bring_under_tension(speed: int = SPEED_MAX_ANGLE_PER_SEC_CALIBRATION):
     await multitask(
         top_left.run_until_stalled(
-            speed=speed * top_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
@@ -264,25 +270,25 @@ def relax_tension(
     add_wait: int = RELAX_SETTLE_TIME,
 ):
     top_left.run_time(
-        speed=speed * top_left_out,
+        speed=speed * reel_out,
         time=time,
         then=Stop.COAST,
         wait=False,
     )
     bottom_right.run_time(
-        speed=speed * bottom_right_out,
+        speed=speed * reel_out,
         time=time,
         then=Stop.COAST,
         wait=False,
     )
     top_right.run_time(
-        speed=speed * top_right_out,
+        speed=speed * reel_out,
         time=time,
         then=Stop.COAST,
         wait=False,
     )
     bottom_left.run_time(
-        speed=speed * bottom_left_out,
+        speed=speed * reel_out,
         time=time,
         then=Stop.COAST,
         wait=False,
@@ -309,23 +315,23 @@ async def travel_to_top_left_zero_position(
     await multitask(
         # Reel In
         top_left.run_until_stalled(
-            speed=speed * top_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         # Others Reel Out
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
@@ -355,17 +361,17 @@ async def tension_top_left_partners(
 ):
     await multitask(
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
@@ -451,23 +457,23 @@ async def travel_to_bottom_right_zero_position(
     await multitask(
         # Reel In
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         # Others Reel Out
         top_left.run_until_stalled(
-            speed=speed * top_left_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
@@ -497,17 +503,17 @@ async def tension_bottom_right_partners(
 ):
     await multitask(
         top_left.run_until_stalled(
-            speed=speed * top_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
@@ -567,23 +573,23 @@ async def travel_to_bottom_left_zero_position(
     await multitask(
         # Reel In
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         # Others Reel Out
         top_left.run_until_stalled(
-            speed=speed * top_left_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
@@ -613,17 +619,17 @@ async def tension_bottom_left_partners(
 ):
     await multitask(
         top_left.run_until_stalled(
-            speed=speed * top_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         top_right.run_until_stalled(
-            speed=speed * top_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
@@ -683,23 +689,23 @@ async def travel_to_top_right_zero_position(
     await multitask(
         # Reel In
         top_right.run_until_stalled(
-            speed=speed * top_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         # Others Reel Out
         top_left.run_until_stalled(
-            speed=speed * top_left_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_out,
+            speed=speed * reel_out,
             then=Stop.HOLD,
             duty_limit=STALL_COLLISION_CLUTCH_DUTY_LIMIT,
         ),
@@ -729,17 +735,17 @@ async def tension_top_right_partners(
 ):
     await multitask(
         top_left.run_until_stalled(
-            speed=speed * top_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_left.run_until_stalled(
-            speed=speed * bottom_left_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
         bottom_right.run_until_stalled(
-            speed=speed * bottom_right_in,
+            speed=speed * reel_in,
             then=Stop.HOLD,
             duty_limit=STALL_TENSION_CLUTCH_DUTY_LIMIT,
         ),
@@ -800,11 +806,11 @@ bottom_right_travel_center = (
 ) / 2 + bottom_right_travel_min
 
 bottom_left_travel_center = (
-    bottom_left_travel_min - bottom_left_travel_max
-) / 2 + bottom_left_travel_max
+    bottom_left_travel_max - bottom_left_travel_min
+) / 2 + bottom_left_travel_min
 top_right_travel_center = (
-    top_right_travel_min - top_right_travel_max
-) / 2 + top_right_travel_max
+    top_right_travel_max - top_right_travel_min
+) / 2 + top_right_travel_min
 
 
 print_parameter_status("Stage 3.1: Claculate the center of the travel ranges")
