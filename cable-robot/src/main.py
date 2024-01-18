@@ -36,30 +36,41 @@ hub.light.blink(Color.GREEN, [500, 500])
 
 # Model Constants
 
-STALL_TENSION_CLUTCH_DUTY_LIMIT = 22
+STALL_TENSION_CLUTCH_DUTY_LIMIT = 20
 """
 Stall sensitivity before clutch triggers during tensioning.
 
-Value   Ratio           Motor                           Reel
-22      1:3   (1/3)     Black Gear 12 (32270)           -> Black Gear 36 (32498)
-30      1:1.4 (5/7)     Light Yellow Gear 20 (18575)    -> Light Grey Gear 28 (46372)
-35      1:1   (1/1)     Dark Grey Gear 24 (24505)       -> Dark Grey Gear 24 (24505)
+With default self made reel: avg load of 41 mNm
+
+With official lego technic reel (32012): avg load of 53 mNm
+
+Grey Spring     Red Spring
+Value           Value       Ratio           Motor                           Reel
+20              22          1:3   (1/3)     Black Gear 12 (32270)           -> Black Gear 36 (32498)
+                30          1:1.4 (5/7)     Light Yellow Gear 20 (18575)    -> Light Grey Gear 28 (46372)
+                35          1:1   (1/1)     Dark Grey Gear 24 (24505)       -> Dark Grey Gear 24 (24505)
 """
 
-STALL_COLLISION_CLUTCH_DUTY_LIMIT = 18
+STALL_COLLISION_CLUTCH_DUTY_LIMIT = 17
 """
 Stall sensitivity before clutch triggers when forcing disk into motor.
 
-Value   Ratio           Motor                           Reel
-18      1:3   (1/3)     Black Gear 12 (32270)           -> Black Gear 36 (32498)
-25      1:1.4 (5/7)     Light Yellow Gear 20 (18575)    -> Light Grey Gear 28 (46372)
-30      1:1   (1/1)     Dark Grey Gear 24 (24505)       -> Dark Grey Gear 24 (24505)
+
+With default self made reel: avg load of 41 mNm
+
+With official lego technic reel (32012): avg load of 53 mNm
+
+Grey Spring     Red Spring
+Value           Value       Ratio           Motor                           Reel
+17              18          1:3   (1/3)     Black Gear 12 (32270)           -> Black Gear 36 (32498)
+                25          1:1.4 (5/7)     Light Yellow Gear 20 (18575)    -> Light Grey Gear 28 (46372)
+                30          1:1   (1/1)     Dark Grey Gear 24 (24505)       -> Dark Grey Gear 24 (24505)
 """
 
 SPEED_MAX_ANGLE_PER_SEC_CALIBRATION = 300
 SPEED_MAX_ANGLE_PER_SEC = 1500
 
-RELAX_TIME = 1000
+RELAX_TIME = 1500
 RELAX_SETTLE_TIME = 500
 
 ###########################################################
