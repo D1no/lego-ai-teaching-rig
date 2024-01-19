@@ -197,11 +197,11 @@ def print_parameter_status(title: str = "Current Parameters"):
 async def log_load(every_ms: int = 200):
     while True:
         print(
-            "Load [TL, BR, TR, BL]",
-            top_left.load(),
-            bottom_right.load(),
-            top_right.load(),
-            bottom_left.load(),
+            "Speed deg/s (Load mNm) [TL, BR, TR, BL]",
+            f"{top_left.speed()} ({top_left.load()})",
+            f"{bottom_right.speed()} ({bottom_right.load()})",
+            f"{top_right.speed()} ({top_right.load()})",
+            f"{bottom_left.speed()} ({bottom_left.load()})",
         )
 
         await wait(every_ms)
